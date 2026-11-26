@@ -43,9 +43,9 @@ Source: [Hacksgiving — Meet the Judges, Prizes, and Rules and guidelines](http
 
 - [x] Runs on a Fly Sprite: `stage-scout`.
 - [x] Uses a Sprites connector: the Sprite-scoped OpenRouter connector.
-- [ ] Put the source in an accessible code repository and record its URL.
+- [x] Source is published at https://github.com/quiint/stage-scout.
 - [ ] Make a short demo that shows a real search, saved pick, and source-linked result.
-- [ ] Host the demo somewhere reviewers can open (or clearly provide the private-access route if access is intentionally restricted).
+- [x] Host a working public demo with anonymous session isolation and bounded request limits.
 - [ ] Write the one- or two-sentence entry description.
 - [ ] Publish a short social post with the demo and `@flydotio` tag.
 - [ ] Complete Fly’s submission form with the code link, demo link, social-post link, connector name, and description before the Pacific deadline.

@@ -40,12 +40,12 @@ Pending: publish the prepared post below, tagging `@flydotio`.
 ## Pre-submit checklist
 
 - [x] Agent runs on a Fly Sprite.
-- [x] Private demo URL is live and healthy.
+- [x] Working public demo is live with anonymous session isolation and bounded search limits.
 - [x] Sprites-managed OpenRouter connector is scoped exclusively to `stage-scout`.
-- [x] Full deployed test suite passes: 8 tests, 15 assertions.
+- [x] Full local regression suite passes: 9 tests, 16 assertions; the public Sprite search flow is verified end to end.
 - [x] Form description, demo route, and social copy are ready.
 - [x] Run a live ranked-result demo with Groq `openai/gpt-oss-20b`.
 - [x] Publish the reviewed source to https://github.com/quiint/stage-scout.
-- [ ] Decide whether the demo URL should remain private or be made reviewer-accessible; the app currently stores saved picks for all allowed Sprite viewers, so it must not be made public unchanged.
+- [x] Isolate browser sessions and apply search limits before making the demo public.
 - [ ] Publish the social post and use its URL in Fly’s form.
 - [ ] Submit the form before 11:59 p.m. Pacific on November 29, 2026.
