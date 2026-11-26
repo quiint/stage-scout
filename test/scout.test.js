@@ -1,0 +1,14 @@
+import {test,expect} from 'bun:test';
+import {validate,normalize,changes,personalize,rankWithGroq,safeUrl,catalogue} from '../scout.js';
+const query={city:'Charlotte',state:'NC',from:'2027-02-01',to:'2027-03-01',regional:false};
+const row={id:1,work_id:2,show_title:'Show',city:'Charlotte',state:'NC',venue_name:'Belk',start_date:'2027-02-10',end_date:'2027-02-15',status:'scheduled',review_status:'approved',source_url:'https://example.com/show'};
+test('validates real calendar dates, ordered ranges and states',()=>{expect(validate(query).city).toBe('Charlotte');expect(()=>validate({...query,from:'2027-02-30'})).toThrow();expect(()=>validate({...query,to:'2027-01-01'})).toThrow();expect(()=>validate({...query,state:'North Carolina'})).toThrow();});
+test('only approved overlapping local listings are eligible',()=>{const rows=[row,{...row,id:2,status:'cancelled'},{...row,id:3,city:'Raleigh'},{...row,id:4,review_status:'pending'},{...row,id:5,start_date:'2028-01-01'}];expect(normalize(rows,query).map(x=>x.id)).toEqual([1]);expect(normalize(rows,{...query,regional:true}).map(x=>x.id)).toEqual([1,3]);});
+test('deduplicates listings and strips unsafe source links',()=>{expect(normalize([row,row],query)).toHaveLength(1);expect(safeUrl('javascript:alert(1)')).toBeNull();});
+test('tracks new and changed listings without re-labelling unchanged ones',()=>{const prior=[{id:1,start:'2027-02-01',end:'2027-02-10',venue:'Belk'}];expect(changes(prior,[...prior,{id:2}]).map(x=>x.change)).toEqual([null,'new']);expect(changes(prior,[{...prior[0],start:'2027-02-02'}])[0].change).toBe('updated');});
+test('model cannot invent recommended IDs',async()=>{const mock=async()=>Response.json({choices:[{message:{content:JSON.stringify({picks:[{id:999,reason:'Fake'},{id:1,reason:'Suggested for your tastes.'}]})}}]});const result=await personalize(query,[{id:1,title:'Show'}],'https://api.sprites.dev/v1/gateway/openrouter/test',mock);expect(result.items).toHaveLength(1);expect(result.items[0].id).toBe(1);});
+test('missing connector is explicitly catalogue-only',async()=>{expect((await personalize(query,[{id:1}],null)).mode).toBe('catalogue');});
+test('Groq rank rejects IDs outside the supplied catalogue',async()=>{const mock=async()=>Response.json({picks:[{id:999,reason:'Fake'},{id:1,reason:'A real pick.'}],note:'One match.'});const result=await rankWithGroq(query,[{id:1,title:'Show'}],'https://api.stagedoor.theater/api/scout-rank','test-token',mock);expect(result.items.map(x=>x.id)).toEqual([1]);});
+test('catalogue errors are not disguised as empty results',async()=>{await expect(catalogue(query,async()=>new Response('unavailable',{status:503}))).rejects.toThrow('503');});
+
+test('collapses the same Belk engagement under venue aliases',()=>{expect(normalize([{...row,venue_name:'Blumenthal Center: Belk Theater'},{...row,id:22,venue_name:'Belk Theater'}],query)).toHaveLength(1);});

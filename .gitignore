@@ -1,0 +1,5 @@
+node_modules/
+.env*
+data/
+.sprite
+Stage-Scout-Hacksgiving-source.tar.gz
