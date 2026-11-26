@@ -31,7 +31,3 @@ Without a connected model, the app explicitly presents catalogue matches; it doe
 - New/updated listing markers on repeated identical searches.
 - Strict returned-ID validation for model suggestions.
 - Private persistent storage, request-size limits, origin validation and single-flight searches.
-
-## Submission
-
-Built November 25, 2026. Hacksgiving requires a working Sprite and at least one connector, plus code and demo links. Publishing a repository, sharing a demo and submitting the entry remain separate steps.
